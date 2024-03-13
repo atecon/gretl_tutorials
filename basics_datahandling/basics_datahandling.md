@@ -82,6 +82,27 @@ Listing 21 variables:
 
 # Read
 
+## Number of rows
+
+The number of rows of the currently active dataset can be easily retrieved through the [`$nobs`](https://gretl.sourceforge.net/gretl-help/funcref.html#$nobs) accessor:
+
+~~~
+print $nobs
+~~~
+
+which returns 3333.
+
+
+## Number of columns
+
+The number of columns consisting of series can be shown by
+
+~~~
+print nelem(dataset)
+~~~
+
+which returns 20. The [`nelem()`](https://gretl.sourceforge.net/gretl-help/funcref.html#nelem) function counts the number of elements of some object such as a list of series.
+
 
 ## Show top 5 and bottom 5 rows
 
