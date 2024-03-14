@@ -170,6 +170,14 @@ Listing 21 variables:
  18) Totalintlcharge        19) Customerservicecalls   20) Churn
  ```
 
+## Rename column names
+To rename a series' name, use the [`rename`]((https://gretl.sourceforge.net/gretl-help/cmdref.html#rename)) command:
+
+~~~
+rename Totaldaycalls NumberOfCalls
+~~~
+
+
 ## Summary statistics
 
 The [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary)command offers a simple way for computing summary statistics. It supports various options. Here is a simple example:
@@ -345,7 +353,45 @@ MT
 
 ## Get missing values per series
 
-***TBA***
+There is (yet) no dedicated function for doing this. However, we can exploit the [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary) command for doing this.
+
+If you execute `summary`, you obtain many statistics as well as the number of missing values. Here illustrated for two series:
+
+~~~
+summary Areacode Accountlength
+~~~
+
+returning
+
+~~~
+                         Mean         Median        Minimum        Maximum
+Areacode               437.18         415.00         408.00         510.00
+Accountlength          101.06         101.00         1.0000         243.00
+
+                    Std. Dev.           C.V.       Skewness   Ex. kurtosis
+Areacode               42.371       0.096919         1.1263       -0.70637
+Accountlength          39.822        0.39403       0.096563       -0.10947
+
+                     5% perc.      95% perc.       IQ range   Missing obs.
+Areacode               408.00         510.00         102.00              0
+Accountlength          35.000         167.00         53.000              0
+~~~
+
+This table output can also be stored as a matrix before just printing its last column refering to the number of missing values:
+
+~~~
+summary Areacode Accountlength --quiet
+eval $result[,end]
+~~~
+
+The `eval` command just executes some function or command, the `$result` accessor retrieves the result matrix computed by `summary` such that the user can work with it.
+
+In total you get the output showing that both series have no missing values:
+
+~~~
+  0
+  0
+~~~
 
 
 # Update
