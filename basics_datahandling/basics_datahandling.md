@@ -31,7 +31,7 @@ print m
 
 mat2list(m)  # transform a matrix to a list of data series
 
-print dataset -o
+print dataset --byobs
 ~~~
 
 which returns:
@@ -109,7 +109,7 @@ which returns 20. The [`nelem()`](https://gretl.sourceforge.net/gretl-help/funcr
 Printing the the initial rows of the whole dataset can be done by means of the [`print`](https://gretl.sourceforge.net/gretl-help/cmdref.html#print) command and the `--range` option. The `-o` option is a shortcut for printing the dataset in tabular form.
 
 ~~~
-print -o --range=:5
+print --byobs --range=:5
 ~~~
 
 which returns
@@ -136,7 +136,7 @@ Printing the bottom 5 rows requires using the [`$nobs`](https://gretl.sourceforg
 
 ~~~
 scalar n = $nobs-5
-print -o --range=n:
+print --byobs --range=n:
 ~~~
 
 ## Set the number columns to print
@@ -214,7 +214,7 @@ Customerservicec~       1.563      1.000      1.316      0.000      9.000
 Printing the values of a single series (column), just put the name after the `print` command:
 
 ~~~
-print State -o --range=1:5
+print State --byobs --range=1:5
 ~~~
 
 returning
@@ -234,7 +234,7 @@ For printing *k* columns, you can either pass their names sperated by space, or 
 
 ~~~
 list L = State Churn
-print L -o --range=1:5
+print L --byobs --range=1:5
 ~~~
 
 and you get
@@ -292,7 +292,7 @@ Let's say we what to filter the data based on a condition, that can be done easi
 
 ~~~
 smpl Internationalplan == "No" --restrict
-print -o --range=1:5
+print --byobs --range=1:5
 ~~~
 
 returns:
@@ -355,7 +355,7 @@ MT
 
 There is (yet) no dedicated function for doing this. However, we can exploit the [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary) command for doing this.
 
-If you execute `summary`, you obtain many statistics as well as the number of missing values. Here illustrated for two series:
+If you execute `summary`, you obtain many statistics as well --byobsas the number of missing values. Here illustrated for two series:
 
 ~~~
 summary Areacode Accountlength
@@ -413,14 +413,15 @@ print $nobs
 and you get
 
 ~~~
-? print $nobs
-3333
-? smpl --no-missing
-? print $nobs
-3307
+print $nobs
 ~~~
+returns 3333.
 
-showing tha 26 rows have been removed due to missing values.
+~~~
+smpl --no-missing
+print $nobs
+~~~
+returns 3307, showing that 26 rows have been removed due to missing values.
 
 Adding the `--permanent` option to the sample command, would actually delete those 26 rows permanently from your dataset in memory.
 
@@ -443,10 +444,10 @@ Let's create new series named `new` which is the sum of two other series and pri
 
 ~~~
 series new = Totalnightminutes + Totalintlminutes
-print new Totalnightminutes Totalintlminutes -o --range=:5
+print new Totalnightminutes Totalintlminutes --byobs --range=:5
 ~~~
 
-Thjis yields:
+This yields:
 
 ~~~
            new Totalnightminutes Totalintlminutes
@@ -464,7 +465,7 @@ Suppose, we want to overwrite *all* values of series `new` now by 100. Simply ru
 
 ~~~
 series new = 100
-print new -o --range=:5
+print new --byobs --range=:5
 ~~~
 
 and you get
@@ -485,7 +486,7 @@ Suppose, you want to update only a single observation (say the 5th) of series `n
 
 ~~~
 new[5] = 200
-print new -o --range=:5
+print new --byobs --range=:5
 ~~~
 
 yields
@@ -507,7 +508,7 @@ Suppose, we want to replace all values series `new` with 100 by 0 and all 200 by
 matrix find = {100, 200}
 matrix subst = {0, 1}
 series new = replace(new, find, subst)
-print new -o --range=:5
+print new --byobs --range=:5
 ~~~
 
 which yields:
@@ -527,7 +528,10 @@ which yields:
 The string valued series `Churn` consists of two distinct values: "FALSE" and "TRUE":
 
 ~~~
-? eval strvals(Churn)
+eval strvals(Churn)
+~~~
+returns
+~~~
 Array of strings, length 2
 [1] "FALSE"
 [2] "TRUE"
@@ -537,7 +541,7 @@ We want to create a new binary series which takes the value of zero `Churn == "F
 
 ~~~
 series Churn_binary = Churn == "FALSE" ? 0 : 1
-print Churn Churn_binary -o --range=:10
+print Churn Churn_binary --byobs --range=:10
 ~~~
 
 which yields
