@@ -145,6 +145,7 @@ Via the [`set datacols`](https://gretl.sourceforge.net/gretl-help/cmdref.html#se
 
 ~~~
 set datacols 3
+print --byobs --range=:5
 ~~~
 
 Try it out.
