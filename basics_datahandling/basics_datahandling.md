@@ -14,7 +14,7 @@ We use the same dataset in the tutorial as he does. The csv-file can be found he
 
 https://github.com/nicknochnack/Pandasin20Minutes
 
-Just store it on your machine.
+[Just store it on your machine.](https://github.com/atecon/gretl_tutorials/blob/main/basics_datahandling/telco_churn.csv)
 
 
 
