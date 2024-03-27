@@ -10,12 +10,9 @@ This tutorial replicates Nicholas Renotte's video tutoral using Python's Pandas 
 
 https://youtu.be/tRKeLrwfUgU?feature=shared
 
-We use the same dataset in the tutorial as he does. The csv-file can be found here:
+with the associated [github repository](https://github.com/nicknochnack/Pandasin20Minutes).
 
-https://github.com/nicknochnack/Pandasin20Minutes
-
-[Just store it on your machine.](https://github.com/atecon/gretl_tutorials/blob/main/basics_datahandling/telco_churn.csv)
-
+We use the same dataset in the tutorial as he does. The [csv-file can be found here](https://github.com/atecon/gretl_tutorials/blob/main/basics_datahandling/telco_churn.csv).
 
 
 # Create/ load a dataset
