@@ -135,6 +135,29 @@ Printing the bottom 5 rows requires using the [`$nobs`](https://gretl.sourceforg
 scalar n = $nobs-5
 print --byobs --range=n:
 ~~~
+## Sort the dataset
+By means of the [`dataset`](https://gretl.sourceforge.net/gretl-help/cmdref.html#dataset) command jointly with the `sortby` option, one can easily sort the dataset. If a list is given, the sort proceeds hierarchically: if the observations are tied in sort order with respect to the first key variable then the second key is used to break the tie, and so on until the tie is broken or the keys are exhausted.
+
+Here is an example for sorting the dataset by `State` and `Areacode`:
+
+~~~
+list SortBy = State Areacode
+dataset sortby SortBy
+
+print --byobs --range=:5
+~~~
+
+which yields:
+
+~~~
+         State Accountlength     Areacode Internationalplan Voicemailplan
+
+1           AK            36          408                No           Yes
+2           AK           104          408                No            No
+3           AK            78          408                No            No
+4           AK           110          408                No            No
+5           AK           127          408                No            No
+~~~
 
 ## Set the number columns to print
 
