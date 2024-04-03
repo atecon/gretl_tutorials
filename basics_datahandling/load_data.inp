@@ -1,0 +1,6 @@
+set verbose off
+open "telco_churn.csv" --quiet
+summary Areacode Accountlength
+
+summary Areacode Accountlength --quiet
+eval $result[,end]

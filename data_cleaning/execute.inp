@@ -1,0 +1,72 @@
+set verbose off
+set datacols 8
+
+# Parameters
+string WORKDIR = "/home/artur/git/gretl_tutorials/data_cleaning"
+string DATAFILE = "online_shoppers_intention.csv"
+set workdir "@workdir"
+
+# Load the dataset and look at data
+open "online_shoppers_intention.csv"
+
+print dataset --byobs --range=:5  # initial observations
+print dataset --byobs --range=-5: # last observations
+
+printf "Number of columns = %d\n", nelem(dataset)
+printf "Number of rows = %d\n", $nobs
+
+# Random draw from the data
+set seed 1234
+dataset resample 10
+print dataset --byobs
+
+smpl full # acticate the full sample again
+
+# Descriptive statistics
+summary dataset
+
+# Count the number of negative durations that occur for each variable
+list L = Administrative_Duration Informational_Duration ProductRelated_Duration
+loop foreach i L
+    string vname = "$i"
+    scalar n = sum($i < 0)  # actual count of negative values
+    printf "%s = %d (%.2f pct.)\n", vname, n, (n/$nobs)*100
+endloop
+
+# Notice also that when there is a negative duration for one of the three
+# duration variables, the other two are also negative.
+smpl Administrative_Duration < 0 --restrict
+print L --byobs
+smpl full
+
+# Boxplot of variables
+list L = dataset
+#L -= Revenue Weekend VisitorType Month
+
+strings Plots = array(0)
+
+loop foreach i L
+    if getinfo($i).has_string_table == FALSE   # do not plot string-valued series
+        string s = empty
+        boxplot $i --outbuf=s { set logscale y 2;}
+        Plots += s
+    endif
+endloop
+
+gridplot Plots --fontsize=8 --cols=3 --output=display
+
+eval getinfo(VisitorType)
+
+# Categorical variables
+# show the unique values in each categorical column 
+for col in shopping_orig.select_dtypes(include=['object']).columns:
+    print(shopping_orig[col].value_counts(), "\n")
+
+
+
+
+
+
+
+
+
