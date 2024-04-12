@@ -1,0 +1,80 @@
+set verbose off
+
+# Set your working directory
+set workdir "/home/artur/git/gretl_tutorials/basics_visualisation"
+
+# Assuming that the dataset lies in the working directory
+open "./housing.gdt"
+
+# Print initial and last rows
+print dataset --byobs --range=1:5
+print dataset --byobs --range=-5:
+
+# Histogram
+# I assume you have a folder named "figures" in your working directory
+freq price --plot="./figures/histogram_price.png"
+
+# Boxplot
+boxplot price --output=display
+
+# Customise the boxplot
+boxplot price --output="./figures/boxplot_price.png" \
+  { set title "Boxplot of Price";\
+  set ylabel "Price";\
+  set ytics 20000;\
+  set grid;}
+
+# Grouped boxplot
+boxplot price prefarea --factorized --output="./figures/boxplot_price_by_prefarea.png" \
+  { set title "Boxplot of Price grouped by 'prefarea'";\
+  set ylabel "Price";\
+  set ytics 20000;\
+  set grid;}
+
+
+# Swarmplot
+gnuplot lotsize prefarea fit=none --output="./figures/swarmplot.png" \
+  { set jitter overlap 0.05;}
+  
+# Kernel density plot  # TODO: ticket for gnuplot customisation support
+kdplot price --output="./figures/kdplot_price.png" #\
+# Does not work:  { set title "foo"; }
+
+# Grouped kernel density plot
+include fdensity.gfn
+bundle Opts = _(dest = "./figures/kde_price_by_airco.png",/
+                add_opts = "set grid; set key top right; set logscale x 2")
+fdensity(price, airco, Opts)
+
+# Scatterplots
+gnuplot price lotsize --fit=linear --output="./figures/scatter_price_lotsize.png" \
+  {set title "Relationship between price and lotsize";\
+   set grid;}
+
+# Grouped scatterplot
+gnuplot price lotsize airco --dummy --output="./figures/scatter_price_lotsize_by_airco.png" \
+  {set title "Relationship between price and lotsize by airco";\
+   set grid;}
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
