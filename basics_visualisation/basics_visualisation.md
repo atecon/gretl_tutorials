@@ -65,7 +65,7 @@ freq price --plot=display
 
 This will create the following histogram:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/histogram_price.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/histogram_price.png" width="30%" />
 
 As you can see, the histogram shows the distribution of the variable `price`. The x-axis represents the price of the houses, while the y-axis represents the frequency of the prices. The histogram is divided into bins, and the height of each bin represents the frequency of the prices in that bin.
 
@@ -95,7 +95,7 @@ boxplot price --output=display \
 
 The customised boxplot looks like this:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/boxplot_price.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/boxplot_price.png" width="30%" />
 
 "The cheapest house costs $25,000 and the most expensive around $190,000. 25% of the houses cost a maximum of $50,000 and the top 25% of properties cost at least $80,000. The middle 50% of houses cost between $50,000 and $80,000. There are a few extremely high-priced houses that cost more than $125,000."
 
@@ -123,7 +123,7 @@ gnuplot lotsize prefarea --fit=none --output=display \
 
 The resulting plot is:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/swarmplot.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/swarmplot.png" width="30%" />
 
 It is evident that the majority of houses in non-preferred areas have rather small plots between 2,500 and 5,000 square feet. In preferred areas, the plots tend to be larger and range between 5,000 and 7,500 square feet. However, there are also houses in non-preferred areas with very large plots of more than 7,500 square feet.
 
@@ -141,7 +141,7 @@ kdplot price --output=display
 
 This will produce the following kernel density plot:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/kdplot_price.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/kdplot_price.png" width="30%" />
 
 
 ## Grouped kernel density plots
@@ -159,7 +159,7 @@ fdensity(price, airco, Custom)
 
 The resulting plot is:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/kde_price_by_airco.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/kde_price_by_airco.png" width="30%" />
 
 
 ## Scatter plots
@@ -173,7 +173,7 @@ gnuplot price lotsize --fit=linear --output=display \
 
 This creates the following scatter plot:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/scatter_price_lotsize.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/scatter_price_lotsize.png" width="30%" />
 
 
 ### Grouped scatter plots
@@ -188,7 +188,7 @@ gnuplot price lotsize airco --dummy --output=display \
 ```
 And the plot looks like this:
 
-<img src="https://github.com/atecon/gretl_tutorials/tree/main/basics_visualisation/figures/scatter_price_lotsize_by_airco.png" width="30%" />
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/scatter_price_lotsize_by_airco.png" width="30%" />
 
 
 
