@@ -1,6 +1,6 @@
 set verbose off
 
-# Set your working directory
+# Set your working directory -- ADJUST THE PATH
 set workdir "/home/artur/git/gretl_tutorials/basics_visualisation"
 
 # Assuming that the dataset lies in the working directory
@@ -33,31 +33,47 @@ boxplot price prefarea --factorized --output="./figures/boxplot_price_by_prefare
 
 
 # Swarmplot
-gnuplot lotsize prefarea fit=none --output="./figures/swarmplot.png" \
+gnuplot lotsize prefarea --fit=none --output="./figures/swarmplot.png" \
   { set jitter overlap 0.05;}
-  
+
 # Kernel density plot  # TODO: ticket for gnuplot customisation support
 kdplot price --output="./figures/kdplot_price.png" #\
 # Does not work:  { set title "foo"; }
 
 # Grouped kernel density plot
 include fdensity.gfn
-bundle Opts = _(dest = "./figures/kde_price_by_airco.png",/
+bundle Opts = _(dest = "./figures/kde_price_by_airco.png",
                 add_opts = "set grid; set key top right; set logscale x 2")
 fdensity(price, airco, Opts)
 
 # Scatterplots
 gnuplot price lotsize --fit=linear --output="./figures/scatter_price_lotsize.png" \
   {set title "Relationship between price and lotsize";\
-   set grid;}
+  set grid;}
 
 # Grouped scatterplot
 gnuplot price lotsize airco --dummy --output="./figures/scatter_price_lotsize_by_airco.png" \
   {set title "Relationship between price and lotsize by airco";\
+  set grid;}
+
+
+# Scatterplots plot of the variables `price` and `lotsize` grouped by number of
+# bathrooms for each category of `airco`.
+strings PlotObjects = array(2)
+
+smpl airco == 0 --restrict --replace
+gnuplot price lotsize bathrms --dummy --outbuf=PlotObjects[1] \
+  {set title "price and lotsize by n(bathrms) for airco = 0";\
    set grid;}
-  
 
+smpl airco == 1 --restrict --replace
+gnuplot price lotsize bathrms --dummy --outbuf=PlotObjects[2] \
+  {set title "price and lotsize by n(bathrms) for airco = 1";\
+  set grid;}
 
+string filename = "./figures/scatter_grid_price_lotprice_by_bathrooms_airco.png"
+gridplot PlotObjects --cols=2 --output="@filename" \
+  --fontsize=12 --width=1200 --height=600
 
 
 

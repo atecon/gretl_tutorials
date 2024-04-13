@@ -2,6 +2,10 @@
 
 In this exercise, you will learn how to create different types of plots using Gretl. You will learn how to create basic plots such as histograms, scatter plots, and box plots etc. You will also learn how to customise these plots to make them more informative and visually appealing.
 
+**Wiki**: We also recommend to read the following Wiki page on Plotting:
+
+https://github.com/gretl-project/material-on-gretl/wiki/Plotting
+
 We are going to use the *housing* dataset. This dataset contains 546 observations on house sales in Windsor, Canada. The data is stored in the file `housing.csv` or `housing.gdt` (Gretl's native datatype).
 
 ## Variables of the dataset
@@ -191,8 +195,32 @@ And the plot looks like this:
 <img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/scatter_price_lotsize_by_airco.png" width="30%" />
 
 
+## Gridplots
+Gridplots are a great way to visualise the relationship between multiple variables. You can use the following code to create a grid of two scatterplots plot of the variables `price` and `lotsize` grouped by number of bathrooms for each category of `airco`.
+
+```{gretl}
+strings PlotObjects = array(2)  # temporarily store gp-files
+
+# Restrict the sample to airco = 0
+smpl airco == 0 --restrict --replace
+gnuplot price lotsize bathrms --dummy --outbuf=PlotObjects[1] \
+  {set title "price and lotsize by n(bathrms) for airco = 0";\
+   set grid;}
+
+# Restrict the sample to airco = 1
+smpl airco == 1 --restrict --replace
+gnuplot price lotsize bathrms --dummy --outbuf=PlotObjects[2] \
+  {set title "price and lotsize by n(bathrms) for airco = 1";\
+  set grid;}
+
+# Pass filenames and create actual gridplot
+# Customize the gridplot, too
+gridplot PlotObjects --cols=2 --output=display \
+  --fontsize=12 --width=1200 --height=600
+```
 
 
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/basics_visualisation/figures/scatter_grid_price_lotprice_by_bathrooms_airco.png" width="30%" />
 
 
-
+That's it! You have learned how to create different types of plots using Gretl. You have learned how to create basic plots such as histograms, scatter plots, and box plots etc. You have also learned how to customise these plots to make them more informative and visually appealing.
