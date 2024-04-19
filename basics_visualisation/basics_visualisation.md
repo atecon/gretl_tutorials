@@ -29,7 +29,6 @@ For this exercise, we will use the some user-contributed Gretl packages. These c
 ```{gretl}
 pkg install fdensity
 pkg install PairPlot
-pkg install Datatools
 ```
 
 Next, you need to load the packages into memory. You can do this by running the following code:
