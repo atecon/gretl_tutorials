@@ -36,7 +36,6 @@ Next, you need to load the packages into memory. You can do this by running the 
 ```{gretl}
 include fdensity.gfn
 include PairPlot.gfn
-include Datatools.gfn
 ```
 
 ## Load the dataset and have a first look
