@@ -101,7 +101,7 @@ print shape(dataset)
 which returns 3333 and 20 since the dataset has 3333 rows and 20 columns.
 
 
-## Show top 6 and bottom 5 rows
+## Show top 5 and bottom 5 rows
 
 Printing the the initial rows of the whole dataset can be done by means of the `head()` function from PandasPort again.
 
@@ -312,6 +312,25 @@ PandasPort's function `nuniq()`  reveals the number of distinct values. Here is 
 
 ~~~
 eval nuniq(State)
+~~~
+
+## Count the number of observations for each distinct value
+The function `value_counts()` from the PandasPort package, counts the occurrence of each unique value in a series or matrix (column vector). This corresponds to the frequency of each distinct observation.
+
+Let's execute the following to print the frequencies for the initial 5 distinct values of series `State`:
+~~~
+eval head(value_counts(State))
+~~~
+
+which returns:
+
+~~~
+       State        count 
+           1           70 
+           2           78 
+           3           68 
+           4           60 
+           5           80 
 ~~~
 
 
