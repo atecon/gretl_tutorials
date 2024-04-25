@@ -1,6 +1,132 @@
 set verbose off
+
+set workdir "/home/artur/git/gretl_tutorials/basics_datahandling"
+
+# pkg install PandasPort
+include PandasPort.gfn
+help PandasPort
+
+# Create data matrix
+nulldata 3
+matrix m = {1, 44; 2, 55; 3, 66}
+print m
+list L = mat2list(m)  # transform a matrix to a list of data series
+head(L)
+
+# Load data
 open "telco_churn.csv" --quiet
+print shape(dataset)
+
+head(dataset)
+tail(dataset, 7)
+
+# Sort dataset
+list SortBy = State Areacode
+dataset sortby SortBy
+head(dataset)
+
+## Set the number columns to print
+set datacols 3
+head(dataset)
+
+## Show column names
+varlist
+
+## Rename column names
+rename Totaldaycalls NumberOfCalls
+
+## Summary statistics
+summary --simple
 summary Areacode Accountlength
 
-summary Areacode Accountlength --quiet
-eval $result[,end]
+## Filtering columns
+head(State)
+list L = State Churn
+head(L)
+
+## Get unique values of a series
+strings StateNames = strvals(State)
+print StateNames --range=1:
+eval uniq(Churn)
+eval nuniq(State)
+
+## Count the number of observations for each distinct value
+eval head(value_counts(State))
+
+## Filtering rows
+smpl Internationalplan == "No" --restrict
+head(dataset)
+smpl full
+
+smpl Internationalplan == "No" && Churn == "FALSE" --restrict
+head(dataset)
+
+
+## Indexing
+print State[14]
+
+## Get missing values per series
+list L = Areacode Accountlength
+nmissing(L)
+
+smpl full
+## Drop rows
+eval shape(dataset)
+smpl dataset --no-missing
+eval shape(dataset)
+
+## Dropping columns
+delete Areacode
+
+## Creating calculated columns
+series new = Totalnightminutes + Totalintlminutes
+list L = new Totalnightminutes Totalintlminutes
+head(L)
+
+## Updating an entire column
+series new = 100
+head(new)
+
+## Updating a single value
+new[5] = 200
+head(new)
+
+
+## Replace values
+matrix find = {100, 200}
+matrix subst = {0, 1}
+series new = replace(new, find, subst)
+head(new)
+
+
+## Condition based updating
+eval strvals(Churn)
+series Churn_binary = Churn == "FALSE" ? 0 : 1
+list L = Churn Churn_binary
+head(L, 10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
