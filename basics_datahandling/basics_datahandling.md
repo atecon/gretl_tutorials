@@ -14,6 +14,19 @@ with the associated [github repository](https://github.com/nicknochnack/Pandasin
 
 We use the same dataset in the tutorial as he does. The [csv-file can be found here](https://github.com/atecon/gretl_tutorials/blob/main/basics_datahandling/telco_churn.csv).
 
+# Install and load a package
+We will install a package named ["PandasPort"](https://github.com/atecon/PandasPort) which simplifies certain operations. Per default, this package ist not installed on your machine, so we neeed to download it from the Gretl package server by the following command (only once needed!):
+
+```
+pkg install PandasPort
+```
+Now, we can load the package into memory to make use of its features:
+```
+include PandasPort.gfn
+
+# help PandasPort  # Read the help optionally
+```
+
 
 # Create/ load a dataset
 
@@ -26,9 +39,8 @@ nulldata 3
 matrix m = {1, 44; 2, 55; 3, 66}
 print m
 
-mat2list(m)  # transform a matrix to a list of data series
-
-print dataset --byobs
+list L = mat2list(m)  # transform a matrix to a list of data series
+head(L)
 ~~~
 
 which returns:
@@ -40,12 +52,11 @@ m (3 x 2)
    2   55
    3   66
 
+     L.column1    L.column2
 
-         index      column1      column2
-
-1            1            1           44
-2            2            2           55
-3            3            3           66
+1            1           44
+2            2           55
+3            3           66
 ~~~
 
 
@@ -79,34 +90,23 @@ Listing 21 variables:
 
 # Read
 
-## Number of rows
+## Number of rows and columns
 
-The number of rows of the currently active dataset can be easily retrieved through the [`$nobs`](https://gretl.sourceforge.net/gretl-help/funcref.html#$nobs) accessor:
-
-~~~
-print $nobs
-~~~
-
-which returns 3333.
-
-
-## Number of columns
-
-The number of columns consisting of series can be shown by
+The number of rows of the currently active dataset can be easily retrieved through the `shape()` function from the PandasPort package:
 
 ~~~
-print nelem(dataset)
+print shape(dataset)
 ~~~
 
-which returns 20. The [`nelem()`](https://gretl.sourceforge.net/gretl-help/funcref.html#nelem) function counts the number of elements of some object such as a list of series.
+which returns 3333 and 20 since the dataset has 3333 rows and 20 columns.
 
 
-## Show top 5 and bottom 5 rows
+## Show top 6 and bottom 5 rows
 
-Printing the the initial rows of the whole dataset can be done by means of the [`print`](https://gretl.sourceforge.net/gretl-help/cmdref.html#print) command and the `--range` option. The `-o` option is a shortcut for printing the dataset in tabular form.
+Printing the the initial rows of the whole dataset can be done by means of the `head()` function from PandasPort again.
 
 ~~~
-print --byobs --range=:5
+head(dataset)
 ~~~
 
 which returns
@@ -129,12 +129,13 @@ which returns
 5               Yes            No                   0
 ~~~
 
-Printing the bottom 5 rows requires using the [`$nobs`](https://gretl.sourceforge.net/gretl-help/funcref.html#$nobs) accessor which grabs the number of rows of the active dataset:
+For printing the last 7 observations, use the `tail()` function:
 
-~~~
-scalar n = $nobs-5
-print --byobs --range=n:
-~~~
+```
+tail(dataset, 7)
+```
+
+
 ## Sort the dataset
 By means of the [`dataset`](https://gretl.sourceforge.net/gretl-help/cmdref.html#dataset) command jointly with the `sortby` option, one can easily sort the dataset. If a list is given, the sort proceeds hierarchically: if the observations are tied in sort order with respect to the first key variable then the second key is used to break the tie, and so on until the tie is broken or the keys are exhausted.
 
@@ -144,7 +145,7 @@ Here is an example for sorting the dataset by `State` and `Areacode`:
 list SortBy = State Areacode
 dataset sortby SortBy
 
-print --byobs --range=:5
+head(dataset)
 ~~~
 
 which yields:
@@ -159,13 +160,14 @@ which yields:
 5           AK           127          408                No            No
 ~~~
 
+
 ## Set the number columns to print
 
 Via the [`set datacols`](https://gretl.sourceforge.net/gretl-help/cmdref.html#set) command, the user can specify how many columns to print per data block:
 
 ~~~
 set datacols 3
-print --byobs --range=:5
+head(dataset)
 ~~~
 
 Try it out.
@@ -235,7 +237,7 @@ Customerservicec~       1.563      1.000      1.316      0.000      9.000
 Printing the values of a single series (column), just put the name after the `print` command:
 
 ~~~
-print State --byobs --range=1:5
+head(State)
 ~~~
 
 returning
@@ -255,19 +257,19 @@ For printing *k* columns, you can either pass their names sperated by space, or 
 
 ~~~
 list L = State Churn
-print L --byobs --range=1:5
+head(L)
 ~~~
 
 and you get
 
 ~~~
-         State        Churn
+       L.State      L.Churn
 
-1           KS        FALSE
-2           OH        FALSE
-3           NJ        FALSE
-4           OH        FALSE
-5           OK        FALSE
+1           AK        FALSE
+2           AK        FALSE
+3           AK        FALSE
+4           AK        FALSE
+5           AK        FALSE
 ~~~
 
 ## Get unique values of a series
