@@ -194,7 +194,9 @@ Listing 21 variables:
  ```
 
 ## Rename column names
-To rename a series' name, use the [`rename`]((https://gretl.sourceforge.net/gretl-help/cmdref.html#rename)) command:
+To rename a series' name, use the [`rename`]((https://gretl.sourceforge.net/gretl-help/cmdref.html#rename)) command
+
+Here we rename series `Totaldaycalls` to `NumberOfCalls`:
 
 ~~~
 rename Totaldaycalls NumberOfCalls
@@ -203,7 +205,7 @@ rename Totaldaycalls NumberOfCalls
 
 ## Summary statistics
 
-The [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary)command offers a simple way for computing summary statistics. It supports various options. Here is a simple example:
+The [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary) command offers a way for computing summary statistics. It supports various options. Here is a simple example:
 
 ~~~
 summary --simple
@@ -231,10 +233,11 @@ Totalintlcharge         2.765      2.780     0.7541      0.000      5.400
 Customerservicec~       1.563      1.000      1.316      0.000      9.000
 ~~~
 
+Get rid of the `--simple` option, and see what you get.
 
 ## Filtering columns
 
-Printing the values of a single series (column), just put the name after the `print` command:
+Printing the values of a single series (column), just put the name into the `head()` function:
 
 ~~~
 head(State)
@@ -251,7 +254,6 @@ returning
 4           OH
 5           OK
 ~~~
-
 
 For printing *k* columns, you can either pass their names sperated by space, or more elgantly, define a list (an object that can hold multiple series of a dataset) first:
 
@@ -274,7 +276,7 @@ and you get
 
 ## Get unique values of a series
 
-In case your series is string-valued, as series `State` in our current dataset, you first need to retrieve the unique string values by means of the [`strvals()`](https://gretl.sourceforge.net/gretl-help/funcref.html#strvals) function and store the result in an array of strings. This can then be printed:
+In case your series is string-valued, as series `State` in our current dataset, you first need to retrieve the distinct string values by means of the [`strvals()`](https://gretl.sourceforge.net/gretl-help/funcref.html#strvals) function and store the result in an array of strings. This can then be printed:
 
 ~~~
 strings StateNames = strvals(State)
@@ -306,6 +308,12 @@ returns
   2
 ~~~
 
+PandasPort's function `nuniq()`  reveals the number of distinct values. Here is an example for series `State` which returns 51:
+
+~~~
+eval nuniq(State)
+~~~
+
 
 ## Filtering rows
 
@@ -315,7 +323,7 @@ Let's say we what to filter the data based on a condition, that can be done easi
 
 ~~~
 smpl Internationalplan == "No" --restrict
-print --byobs --range=1:5
+head(dataset)
 ~~~
 
 returns:
@@ -342,6 +350,7 @@ One may also want to combine multiple conditions. Here we retrict the data to cu
 
 ~~~
 smpl Internationalplan == "No" && Churn == "FALSE" --restrict
+head(dataset)
 ~~~
 
 and you get
@@ -375,79 +384,40 @@ MT
 
 
 ## Get missing values per series
-
-There is (yet) no dedicated function for doing this. However, we can exploit the [`summary`](https://gretl.sourceforge.net/gretl-help/cmdref.html#summary) command for doing this.
-
-If you execute `summary`, you obtain many statistics as well --byobsas the number of missing values. Here illustrated for two series:
+In order to print the number of missing values per series, we employ PandasPort's function `nmissing()`. In the example, we define a list of series for which we want that statistics before calling the function:
 
 ~~~
-summary Areacode Accountlength
+list L = Areacode Accountlength
+eval nmissing(L)
 ~~~
 
-returning
+The output is:
 
 ~~~
-                         Mean         Median        Minimum        Maximum
-Areacode               437.18         415.00         408.00         510.00
-Accountlength          101.06         101.00         1.0000         243.00
-
-                    Std. Dev.           C.V.       Skewness   Ex. kurtosis
-Areacode               42.371       0.096919         1.1263       -0.70637
-Accountlength          39.822        0.39403       0.096563       -0.10947
-
-                     5% perc.      95% perc.       IQ range   Missing obs.
-Areacode               408.00         510.00         102.00              0
-Accountlength          35.000         167.00         53.000              0
+                 n missing 
+     Areacode            0 
+Accountlength            0
 ~~~
 
-This table output can also be stored as a matrix before just printing its last column refering to the number of missing values:
-
-~~~
-summary Areacode Accountlength --quiet
-eval $result[,end]
-~~~
-
-The `eval` command just executes some function or command, the `$result` accessor retrieves the result matrix computed by `summary` such that the user can work with it.
-
-In total you get the output showing that both series have no missing values:
-
-~~~
-  0
-  0
-~~~
-
-
-# Update
-
-##
 
 ## Drop rows
 
-Again we can make use of the [`smpl`](https://gretl.sourceforge.net/gretl-help/cmdref.html#smpl) command to remove missing values.
-
-Jointly with the `--no-missing` option, all rows are excluded for which at least one variable has a missing value.
+Again we can make use of the [`smpl`](https://gretl.sourceforge.net/gretl-help/cmdref.html#smpl) command to remove missing values. Jointly with the `--no-missing` option, all rows are excluded for which at least one variable has a missing value.
 
 ~~~
-print $nobs
-smpl --no-missing
-print $nobs
+eval shape(dataset)
+smpl dataset --no-missing
+eval shape(dataset)
 ~~~
 
 and you get
 
 ~~~
-print $nobs
+  3307     20 
 ~~~
-returns 3333.
+after having removed some rows.  In total, 26 rows have been removed due to missing values.
 
-~~~
-smpl --no-missing
-print $nobs
-~~~
-returns 3307, showing that 26 rows have been removed due to missing values.
-
-Adding the `--permanent` option to the sample command, would actually delete those 26 rows permanently from your dataset in memory.
-
+Adding the `--permanent` option to the `smpl` command, would actually delete those 26 rows permanently from your dataset in memory.
 
 
 ## Dropping columns
@@ -467,19 +437,20 @@ Let's create new series named `new` which is the sum of two other series and pri
 
 ~~~
 series new = Totalnightminutes + Totalintlminutes
-print new Totalnightminutes Totalintlminutes --byobs --range=:5
+list L = new Totalnightminutes Totalintlminutes
+head(L)
 ~~~
 
 This yields:
 
 ~~~
-           new Totalnightminutes Totalintlminutes
+         L.new L.Totalnightminutes L.Totalintlminutes
 
-1        254.7             244.7             10.0
-2        268.1             254.4             13.7
-3        174.8             162.6             12.2
-4        203.5             196.9              6.6
-5        197.0             186.9             10.1
+1        254.7               244.7               10.0
+2        268.1               254.4               13.7
+3        174.8               162.6               12.2
+4        203.5               196.9                6.6
+5        197.0               186.9               10.1
 ~~~
 
 ## Updating an entire column
@@ -488,7 +459,7 @@ Suppose, we want to overwrite *all* values of series `new` now by 100. Simply ru
 
 ~~~
 series new = 100
-print new --byobs --range=:5
+head(new)
 ~~~
 
 and you get
@@ -509,13 +480,13 @@ Suppose, you want to update only a single observation (say the 5th) of series `n
 
 ~~~
 new[5] = 200
-print new --byobs --range=:5
+head(new)
 ~~~
 
 yields
 
 ~~~
-           new
+             L
 
 1          100
 2          100
@@ -531,13 +502,13 @@ Suppose, we want to replace all values series `new` with 100 by 0 and all 200 by
 matrix find = {100, 200}
 matrix subst = {0, 1}
 series new = replace(new, find, subst)
-print new --byobs --range=:5
+head(new)
 ~~~
 
 which yields:
 
 ~~~
-           new
+             L
 
 1            0
 2            0
@@ -564,24 +535,25 @@ We want to create a new binary series which takes the value of zero `Churn == "F
 
 ~~~
 series Churn_binary = Churn == "FALSE" ? 0 : 1
-print Churn Churn_binary --byobs --range=:10
+list L = Churn Churn_binary
+head(L, 10)
 ~~~
 
 which yields
 
 ~~~
-          Churn Churn_binary
+        L.Churn L.Churn_binary
 
- 1        FALSE            0
- 2        FALSE            0
- 3        FALSE            0
- 4        FALSE            0
- 5        FALSE            0
- 6        FALSE            0
- 7        FALSE            0
- 8        FALSE            0
- 9        FALSE            0
-10         TRUE            1
+ 1        FALSE              0
+ 2        FALSE              0
+ 3        FALSE              0
+ 4        FALSE              0
+ 5        FALSE              0
+ 6        FALSE              0
+ 7        FALSE              0
+ 8        FALSE              0
+ 9        FALSE              0
+10         TRUE              1
 ~~~
 
 
