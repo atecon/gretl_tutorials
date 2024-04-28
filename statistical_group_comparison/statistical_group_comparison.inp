@@ -1,0 +1,17 @@
+set verbose off
+
+# SET YOUR LOCAL PATH
+set workdir "/home/artur/git/gretl_tutorials/statistical_group_comparison/"
+
+open Friedman.csv
+
+# Collect series names in a list object
+list L = Vortest Monat_1 Monat_2 Monat_3 Monat_4
+print L --byobs --range=1:10
+
+matrix mdata = {L}'  # store as matrix and transpose the matrix
+
+string filename = "./figures/items_sold_per_shop.png"
+gnuplot --matrix=mdata --time-series --with-lines --output="@filename" \
+  {set grid; set title "No. of sold items for each of 10 shops";\
+   set ylabel "no. of sold items"; set xlabel "Treatment periods";}
