@@ -68,7 +68,8 @@ Friedman's test makes the following assumptions about the data in X:
 
 ### Prerequisites of the Friedman Test
 - The dependent variable is at least ordinal-scaled.
-- There are related samples (*verbundene Stichproben*), but the related "groups" of measurement values are independent of each other (e.g., the different mother-father-child triads are independent of each other).
+- There are related samples (*verbundene Stichproben*) represented as columns.
+- The related "groups" of measurement values (the rows) are independent of each other (e.g., the different mother-father-child triads are independent of each other).
 
 ### Let's have a look at the data
 We print the first ten rows of both GDP per capita series, `gdp60` and `gdp85`, to get an overview of the data:
