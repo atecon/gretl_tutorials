@@ -57,6 +57,7 @@ Friedman's test makes the following assumptions about the data in X:
 - https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
 - https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/quade.htm
 - https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/friedman.html
+- https://www.uni-koeln.de/~a0032/statistik/texte/mult-comp.pdf
 
 
 ### Examples of Possible Research Questions
@@ -130,7 +131,7 @@ boxplot --matrix=mdata --output=display \
 It looks like the tendency varies over the treatment periods. The Friedman Test is used to test whether the central tendencies of the dependent samples differ.
 
 
-### Conduct the test Friedman Test in Gretl
+### Conduct Friedman Test in Gretl
 
 For conducting the test in Gretl, we use the user-contributed package named `Friedman`. The package only allows for a single row factor B (e.g. different animals) but multiple column factors A (e.g. different treatments).
 
@@ -178,7 +179,7 @@ We see that the p-value is 0.01, which is less than 0.05. Therefore, we reject t
 
 The Friedman test, however, cannot answer the question of which treatment period differs from the others. For this, we need to conduct a post-hoc test. Such a test is not implemented in Gretl so far.
 
-## The Quade Test
+## Conduct Quade Test in Gretl
 The Quade test was proposed by Dana Quade in 1979 which can be used for interval scale data. It is a non-parametric test that is used to compare the central tendencies of more than two groups. The test is an extension of the Wilcoxon signed rank test and is equivalent to it when the treatments (columns) are two.
 
 The Friedman package in Gretl also provides the Quade test. Here is how to conduct the test:
