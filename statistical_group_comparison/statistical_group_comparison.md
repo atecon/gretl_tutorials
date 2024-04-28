@@ -22,15 +22,41 @@ Various tests exist for comparing the tendency of two or more groups. The choice
 
 
 ## Friedman Test
-**Source: https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/friedman.html**
+The Friedman test is a non-parametric statistical test developed by Milton Friedman. The test works for dependent samples, and tests whether the central tendencies of ordinal data -- that is data that can be ranked -- differ across multiple groups.
 
-The Friedman Test for dependent samples tests whether the central tendencies of several dependent samples differ. The Friedman Test is used when the assumptions for an analysis of variance are not met.
+In the simplest case, the data matrix has the following structure:
+- The rows represent the different **groups** (e.g., the different mother-father-child triads).
+- The columns represent the different **treatments** (e.g., the different measurement points).
 
-The term "dependent samples" is used when a measurement value in one sample and a certain measurement value in another sample influence each other. This is the case in three situations:
+The different rows represent changes in a blocking factor B (*row factor*). The different columns represent changes in a factor A (*column factor*). The test computes the ranks within each block.
 
-1. **Repeated Measurements**: The measurement values come from the same person, for example, when measuring before a treatment, during a treatment, and after a treatment, or when different treatments are applied to the same person and are to be compared.
-2. **Natural Pairs**: The measurement values come from different people who are somehow related (e.g., wife – husband – couple therapist, psychologist – patient, lawyer – client, or twins).
-3. **Matching**: The measurement values come from different people who have been assigned to each other, for example, based on a comparable value on a third variable (which is not the focus of the investigation).
+The gretl package we employ in the following, only allows for a single row factor B (e.g. different animals) but multiple column factors A (e.g. different treatments). Friedman's test assumes a model of the form:
+
+x_ij = mu + alpha_i + beta_j + epsilon_ij
+
+where:
+- x_ij is the measurement value in the i-th row and j-th column,
+- mu is the overall location parameter,
+- beta_i is the effect of the i-th row,
+- alpha_j is the effect of the j-th column, and
+- epsilon_ij is the error term.
+
+The test statistic is based on the ranks of the data within each level of B (here only a single one). It tests for a difference across levels of A (columns). Under the null hypothesis alpha_i = 0 and under the alternative alpha_i != 0 (not zero).
+If the p-value is large, there is not sufficient evidence against null hypothesis that the column-sample medians are equal. If the p-value is small, there is sufficient evidence against the null hypothesis that the column-sample medians are equal, and at least one column-sample median is significantly different than the others; i.e., there is a main effect due to factor A.
+
+Friedman's test makes the following assumptions about the data in X:
+
+- All data come from populations having the same continuous distribution, apart from possibly different locations due to column and row effects.
+- All observations are mutually independent.
+
+
+
+### References
+- https://en.wikipedia.org/wiki/Friedman_test
+- https://www.mathworks.com/help/stats/friedman.html
+- https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
+- https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/quade.htm
+- https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/friedman.html
 
 
 ### Examples of Possible Research Questions
@@ -90,8 +116,103 @@ gnuplot --matrix=mdata --time-series --with-lines --output=display \
 
 The plot shows the number of sold items for each of the ten shops over the four treatment periods. The number of sold items varies between the shops and over the treatment periods. The Friedman Test is used to test whether the number of sold items differs over the treatment periods.
 
+This following factorized boxplot shows the distribution of the number of sold items for each shop over the treatment periods. The figure can be created by means of the following commands:
+
+```Gretl
+matrix mdata = {L}  # collect columns of the list in a matrix
+
+boxplot --matrix=mdata --output=display \
+  {set grid; set title "Distribution of items sold per treatment";}
+```
+
+<img src="https://github.com/atecon/gretl_tutorials/blob/main/statistical_group_comparison/figures/boxplot_items_sold_per_treatment.png" width="40%" />
+
+It looks like the tendency varies over the treatment periods. The Friedman Test is used to test whether the central tendencies of the dependent samples differ.
+
 
 ### Conduct the test Friedman Test in Gretl
 
+For conducting the test in Gretl, we use the user-contributed package named `Friedman`. The package only allows for a single row factor B (e.g. different animals) but multiple column factors A (e.g. different treatments).
 
+First, we need to install the package from the Gretl package server. The following command installs the package:
+
+```Gretl
+pkg install Friedman
+```
+This needs only be done once. Next, we load the package into memory:
+
+```Gretl
+include Friedman.gfn
+```
+
+You can read the help file of the package by running the following command:
+
+```Gretl
+help Friedman
+```
+
+Execute the Friedman Test by running the following command:
+
+```Gretl
+matrix results = Friedman(L)
+print results
+```
+
+This command passes a list of series to the function `Friedman()`. The function returns a matrix with the test statistics and p-values.
+
+The output of the test is:
+
+~~~
+Friedman test results with 10 blocks and 5 'treatments':
+  Chi2(4) stat 13.2589, pvalue 0.0100777
+
+results (4 x 1)
+
+      13.259
+    0.010078
+      1.0000
+      0.0000
+~~~
+
+We see that the p-value is 0.01, which is less than 0.05. Therefore, we reject the null hypothesis that the central tendencies of the dependent samples are constant over the treatment periods. The central tendencies of the dependent samples differ significantly, and hence, the treatment had some effect.
+
+The Friedman test, however, cannot answer the question of which treatment period differs from the others. For this, we need to conduct a post-hoc test. Such a test is not implemented in Gretl so far.
+
+## The Quade Test
+The Quade test was proposed by Dana Quade in 1979 which can be used for interval scale data. It is a non-parametric test that is used to compare the central tendencies of more than two groups. The test is an extension of the Wilcoxon signed rank test and is equivalent to it when the treatments (columns) are two.
+
+The Friedman package in Gretl also provides the Quade test. Here is how to conduct the test:
+
+```Gretl
+list L = Vortest Monat_1 Monat_2 Monat_3 Monat_4
+matrix result_quade = Quade(L)
+print result_quade
+```
+
+which returns the following output:
+
+~~~
+Quade test results with 10 blocks and 5 'treatments':
+  F(4, 36), stat 2.35941, pvalue 0.0717163
+
+result_quade (2 x 1)
+
+      2.3594
+    0.071716
+~~~
+
+The null hypothesis of the Quade test is that the central tendencies of the dependent samples are constant over the treatment periods. The p-value is 0.07, which is greater than 0.05. Therefore, we do not reject the null hypothesis that the central tendencies of the dependent samples are constant over the treatment periods. The Quade test does not provide evidence that the treatment had an effect.
+
+### Note
+
+The Quade test is based on the following assumptions:
+
+- The rows are mutually independent. That means that the results within one block (row) do not affect the results within other blocks.
+- The data can be meaningfully ranked.
+- The data have at least interval scale so that the sample range may be determined within each block.
+
+The Quade test is similar to the Friedman test. A few distinctions:
+- For k = 2 columns, the Friedman test is equivalent to a sign test while the Quade test is equivalent to a signed rank test.
+- According to Conover, the Quade test is typically more powerful for k < 5 while the Friedman test tends to become more powerful for k ≥ 5.
+- The Friedman test only requires ordinal scale data (i.e., the data can be ranked) while the Quade test requires at least interval scale data (the range within a block can be computed).
 

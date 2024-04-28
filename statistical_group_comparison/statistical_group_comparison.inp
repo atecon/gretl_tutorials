@@ -14,4 +14,28 @@ matrix mdata = {L}'  # store as matrix and transpose the matrix
 string filename = "./figures/items_sold_per_shop.png"
 gnuplot --matrix=mdata --time-series --with-lines --output="@filename" \
   {set grid; set title "No. of sold items for each of 10 shops";\
-   set ylabel "no. of sold items"; set xlabel "Treatment periods";}
+  set ylabel "no. of sold items"; set xlabel "Treatment periods";}
+ 
+
+matrix mdata = {L}
+string filename = "./figures/boxplot_items_sold_per_treatment.png"
+boxplot --matrix=mdata --output="@filename" \
+  {set grid; set title "Distribution of items sold per treatment";}
+  
+
+# Friedman test
+# pkg install Friedman  # run only once for installation on local machine
+# help Friedman
+include Friedman.gfn
+
+matrix results = Friedman(L)
+print results
+
+
+# Quade Test
+list L = Vortest Monat_1 Monat_2 Monat_3 Monat_4
+matrix result_quade = Quade(L)
+print result_quade
+
+
+
