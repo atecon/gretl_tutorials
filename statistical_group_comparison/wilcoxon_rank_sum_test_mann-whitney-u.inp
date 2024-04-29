@@ -1,0 +1,33 @@
+set verbose off
+
+# SET YOUR LOCAL PATH
+set workdir "/home/artur/git/gretl_tutorials/statistical_group_comparison/"
+
+# Data source: https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/mann.html
+open "wilcoxon_rank_sum_test_mann-whitney-u.sav"
+
+print dataset --byobs
+
+# We need to two separate series which to compare
+# Construct a separate series with test results for each group
+series result_group_1 = NA
+series result_group_2 = NA
+smpl Group == 1 --restrict
+result_group_1 = Data
+smpl Group == 2 --restrict --replace
+result_group_2 = Data
+smpl full
+
+print Group Data result_group_* --byobs
+
+# Create a list of treatment series
+list L = result_group_1 result_group_2
+print L --byobs
+
+summary L --simple
+
+# Conduct test
+difftest result_group_1 result_group_2 --rank-sum
+## No approximate p-value using the standard normal computed as (n1 + n2 < 30)
+## W=55 is outside the lower-tail at the 5 % significance level
+## --> Reject the null hypothesis

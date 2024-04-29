@@ -1,0 +1,28 @@
+set verbose off
+
+# SET YOUR LOCAL PATH
+set workdir "/home/artur/git/gretl_tutorials/statistical_group_comparison/"
+
+# Data source: https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/ttestunabh.html
+open "ttest_unpaired.sav"
+
+# Create a list of treatment series
+print dataset --byobs
+
+# We need to two separate series which to compare
+# Construct a separate series with test results for each class 
+series result_class_1 = NA
+series result_class_2 = NA
+smpl Schulklassen == 1 --restrict
+result_class_1 = GEDCHT
+smpl Schulklassen == 2 --restrict --replace
+result_class_2 = GEDCHT
+smpl full
+
+print Schulklassen GEDCHT result_class_* --byobs
+
+# Conduct test assuming homogenous variance
+meantest result_class_1 result_class_2 
+
+# Conduct test with possibly heterogenous variance
+meantest result_class_1 result_class_2 --unequal-vars

@@ -23,6 +23,11 @@ boxplot --matrix=mdata --output="@filename" \
   {set grid; set title "Distribution of items sold per treatment";}
   
 
+
+# 
+
+
+
 # Friedman test
 # pkg install Friedman  # run only once for installation on local machine
 # help Friedman
@@ -37,5 +42,8 @@ list L = Vortest Monat_1 Monat_2 Monat_3 Monat_4
 matrix result_quade = Quade(L)
 print result_quade
 
+# Sign test
+#series d_Test_M1 = Vortest - Monat_1
+difftest Vortest Monat_1 --sign
 
 

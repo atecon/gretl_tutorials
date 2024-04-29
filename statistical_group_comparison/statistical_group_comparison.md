@@ -19,18 +19,39 @@ Various tests exist for comparing the tendency of two or more groups. The choice
 - Kruskal-Wallis test: for the comparison of more than two groups
     + Are the medians of g>2 groups different?
 
+# Paired Tests
+Paired tests are used when the data is paired. The data is paired when the same subjects are measured at two different time points or under two different conditions. The paired tests are:
+- Paired t-test: for the comparison of two groups
+    + Are the means of the two groups different?
+- Wilcoxon signed-rank test: for the comparison of two groups
+    + Are the medians of the two groups different?
+- Sign test: for the comparison of two groups
+    + Are the medians of the two groups different?
+- Friedman test: for the comparison of more than two groups
+    + Are the medians of g>2 groups different?
+
+
+## Sign Test
+This test is a non-parametric alternative to the well-known t-test. The latter one test for the difference between population means for two paired samples are equal. In case of small samples or non-normal data, the sign test can be used. It can also be applied in the case where there is no quantitative scale, but it is possible to order the data (i.e., an ordinal scale).
+
+The sign test is based on the signs of the differences between the pairs of observations. The test is used to determine if the median of the differences is zero. The test is also known as the binomial sign test.
+
+Under the null hypothesis, the median of the difference of the paired samples is zero. The test statistic is the number of positive differences which follows the Binomial distribution with parameters (n, 0.5), where n is the number of observations.
+
+**Reference**: https://en.wikipedia.org/wiki/Sign_test
+
 
 
 ## Friedman Test
-The Friedman test is a non-parametric statistical test developed by Milton Friedman. The test works for dependent samples, and tests whether the central tendencies of ordinal data -- that is data that can be ranked -- differ across multiple groups.
+The Friedman test is a non-parametric statistical test developed by Milton Friedman. The test works for dependent samples, and tests whether the central tendencies of ordinal data -- that is data that can be ranked -- differ across some factor (rows and/or columns). It is an extension of the sign test when there may be more than two treatments.
 
 In the simplest case, the data matrix has the following structure:
 - The rows represent the different **groups** (e.g., the different mother-father-child triads).
 - The columns represent the different **treatments** (e.g., the different measurement points).
 
-The different rows represent changes in a blocking factor B (*row factor*). The different columns represent changes in a factor A (*column factor*). The test computes the ranks within each block.
+The different rows represent changes in some factor B (*row factor*). The different columns represent changes in some factor A (*column factor*). The test computes the ranks within each block.
 
-The gretl package we employ in the following, only allows for a single row factor B (e.g. different animals) but multiple column factors A (e.g. different treatments). Friedman's test assumes a model of the form:
+The gretl package we make use of in the following only allows for a single row factor B (e.g. different animals) but multiple column factors A (e.g. different treatments). Friedman's test assumes a model of the form:
 
 x_ij = mu + alpha_i + beta_j + epsilon_ij
 
@@ -41,7 +62,7 @@ where:
 - alpha_j is the effect of the j-th column, and
 - epsilon_ij is the error term.
 
-The test statistic is based on the ranks of the data within each level of B (here only a single one). It tests for a difference across levels of A (columns). Under the null hypothesis alpha_i = 0 and under the alternative alpha_i != 0 (not zero).
+The test statistic is based on the ranks of the data within each level of B (here only a single one). It tests for a difference across levels of A (columns). Under the null hypothesis alpha_i = 0, and under the alternative alpha_i != 0 (not zero).
 If the p-value is large, there is not sufficient evidence against null hypothesis that the column-sample medians are equal. If the p-value is small, there is sufficient evidence against the null hypothesis that the column-sample medians are equal, and at least one column-sample median is significantly different than the others; i.e., there is a main effect due to factor A.
 
 Friedman's test makes the following assumptions about the data in X:

@@ -1,0 +1,20 @@
+set verbose off
+
+# SET YOUR LOCAL PATH
+set workdir "/home/artur/git/gretl_tutorials/statistical_group_comparison/"
+
+# Data source: https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/friedman.html#Quick_Start
+open "friedman.csv"
+
+# Load package
+#pkg install Friedman  # only once needed!
+include Friedman.gfn
+help Friedman
+
+# Create a list of treatment series
+list L = Vortest..Monat_4
+print L --byobs
+
+# Conduct test
+matrix results = Friedman(L)
+print results

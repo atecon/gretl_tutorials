@@ -1,0 +1,102 @@
+set verbose off
+
+function bundle ttest_paired (const series y, const series x, const bool silent[FALSE])
+    /*
+       This function computes a paired two sample t-test. It tests
+       that the means for two dedependent (i.e., paired) samples
+       are equal can be formulated as follows:
+       H0: mu1 = mu2
+       H1: mu1 != mu2
+
+
+       takes two series y and x as input, calculates the
+       difference between them, and returns a bundle of results. The results
+       include the mean of the differences, the standard error of the differences,
+       and the degrees of freedom.
+
+       Parameters:
+       y (series)   : The first series for comparison.
+       x (series)   : The second series for comparison.
+       silent (bool): Print results of TRUE (default), otherwise supress output
+
+       Returns:
+       Results (bundle): A bundle containing the following elements:
+       - delta_mean (scalar): The mean of the differences between y and x.
+       - stderr (scalar): The standard error of the differences.
+       - df (scalar): The degrees of freedom, calculated as the number
+       of observations minus 1.
+
+       Raises: error: If there are missing values in the differences between y and x.
+
+       Note: This function assumes that y and x have the same length and
+       that there are no missing values in either series.
+
+       References:
+       https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/ttestabh.html
+       https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/t_test.htm
+    */
+
+    bundle Results
+
+    series delta = y - x
+    errorif(sum(missing(delta)) > 0,
+      "Missing values are not allowed. Please remove first.")
+    scalar Results.delta_mean = mean(delta)
+
+    scalar f1 = sum( (delta - Results.delta_mean)^2 )
+    scalar f2 = ($nobs - 1) * $nobs
+    Results.stderr = sqrt(f1 / f2)
+    Results.test = Results.delta_mean / Results.stderr
+    Results.df = $nobs - 1
+    Results.pvalue = 2 * pvalue(t, Results.df, abs(Results.test))
+
+    # Make a statement about the relevance of the distance
+    # We use the Pearson correlation coefficient here
+    /* Cohen (1992) has suggested the following classification:
+       r >= .10 -> weak effect
+       r >= .30 -> medium effect
+       r >= .50 -> strong effect
+    */
+    Results.corr = sqrt(Results.test^2 / (Results.test^2 + Results.df))
+
+    if !silent
+        print_results(Results)
+    endif
+
+    return Results
+end function
+
+function void print_results (const bundle B)
+    printf "\n\t\tTwo Sample Paired t-Test for Equal Means\n\n"
+    printf "Difference (Delta) in Mean: %8.4f\n", B.delta_mean
+    printf "t-Test Statistic Value: %12.4f\n", B.test
+    printf "Degrees of freedom: %12.d\n", B.df
+    printf "P-Value (2-tailed): %16.4f\n\n", B.pvalue
+end function
+
+
+# Example
+set verbose off
+set assert stop
+
+# Example of paired t-test from p. 178 of Bowker and Lieberman
+# URL: https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/t_test.htm
+matrix my = {73, 43, 47, 53, 58, 47, 52, 38, 61, 56, 56, 34, 55, 65, 75}'
+matrix mx = {51, 41, 43, 41, 47, 32, 24, 43, 53, 52, 57, 44, 57, 40, 68}'
+
+nulldata 15 --preserve
+series y = my
+series x = mx
+
+summary y x --simple
+bundle B = ttest_paired(y, x)
+print B
+
+# Unit-tests
+include assertion.gfn
+assert(B.delta_mean == 8.0)
+assert(B.df == 14)
+assert_almost_equal_num(B.test, 2.81008, 10e-5)
+assert_almost_equal_num(B.pvalue, 0.01390, 10e-5)
+
+

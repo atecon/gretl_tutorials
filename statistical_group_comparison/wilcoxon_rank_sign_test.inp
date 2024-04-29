@@ -1,0 +1,16 @@
+set verbose off
+
+# SET YOUR LOCAL PATH
+set workdir "/home/artur/git/gretl_tutorials/statistical_group_comparison/"
+
+# Data source: https://www.methodenberatung.uzh.ch/de/datenanalyse_spss/unterschiede/zentral/wilkoxon.html
+open "wilcoxon_rank_sign.sav"
+
+# Create a list of treatment series
+list L = Vorher Nachher
+
+print L --byobs --range=1:10
+summary L --simple
+
+# Conduct test
+difftest L --signed-rank
