@@ -401,7 +401,7 @@ and you get
 
 ## Indexing
 
-This is mainyl of interest for matrices, actually. To a certain degree, you can also do indexing for series.
+This is mainly of interest for matrices, actually. To a certain degree, you can also do indexing for series.
 
 The following command will show the 14-th entry of the series `State`:
 
