@@ -357,6 +357,13 @@ returns:
 5           LA           117          408                No            No                   0
 ~~~
 
+Print the number of observations (rows) of the active dataset:
+
+~~~
+printf "No. of observations (rows) restricted data = %d\n", $nobs
+~~~
+
+which returns 3010 observations.
 
 To reset the imposed restriction, simply run:
 
@@ -364,6 +371,13 @@ To reset the imposed restriction, simply run:
 smpl full
 ~~~
 
+Print again the number of observations (rows) of the now active dataset:
+
+~~~
+printf "No. of observations (rows) full dataset = %d\n", $nobs
+~~~
+
+which returns 3333.
 
 One may also want to combine multiple conditions. Here we retrict the data to customers who were not on the international pland and did not churn:
 
